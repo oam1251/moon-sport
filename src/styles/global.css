@@ -1,32 +1,41 @@
-/* Paleta Moon Sport — negro + dorado, tema lunar. Fuente única de verdad. */
+/* Paleta Moon Sport — cálida, suave, con superficies "liquid glass"
+   (vidrio esmerilado translúcido). Fuente única de verdad. */
 :root {
-  --background: #0e0e10;
-  --surface: #19191c;
-  --surface-elevated: #232326;
-  --surface-pressed: #2b2b2f;
+  --background: #fbf1e6;
+  --background-alt: #f6e3d2;
+  --background-glow: #fff8ef;
 
-  --gold: #d4af37;
-  --gold-muted: #8c7127;
-  --gold-soft: rgba(212, 175, 55, 0.14);
+  --surface: rgba(255, 255, 255, 0.55);
+  --surface-elevated: rgba(255, 255, 255, 0.72);
+  --surface-pressed: rgba(255, 255, 255, 0.88);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --glass-blur: 22px;
 
-  --text-primary: #f5f0e6;
-  --text-secondary: #b8b3a8;
-  --text-muted: #7a756b;
-  --text-on-gold: #14140f;
+  --gold: #c99a4b;
+  --gold-deep: #a9782f;
+  --gold-soft: rgba(201, 154, 75, 0.16);
 
-  --danger: #e0654f;
-  --danger-soft: rgba(224, 101, 79, 0.14);
-  --success: #7fbf7f;
-  --success-soft: rgba(127, 191, 127, 0.14);
-  --info: #7fa6d9;
+  --text-primary: #3c2f22;
+  --text-secondary: #8a7561;
+  --text-muted: #ad9a86;
+  --text-on-gold: #fffaf2;
 
-  --border: #2e2e31;
-  --border-soft: #242427;
+  --danger: #d1684f;
+  --danger-soft: rgba(209, 104, 79, 0.13);
+  --success: #6ea378;
+  --success-soft: rgba(110, 163, 120, 0.15);
+  --info: #7c93b0;
+
+  --border: rgba(60, 47, 34, 0.12);
+  --border-soft: rgba(60, 47, 34, 0.07);
+
+  --shadow-sm: 0 2px 10px rgba(120, 90, 50, 0.08);
+  --shadow-md: 0 10px 30px rgba(120, 90, 50, 0.14);
 
   --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
   --radius-pill: 999px;
 
   --space-xs: 4px;
@@ -36,7 +45,7 @@
   --space-xl: 24px;
   --space-xxl: 32px;
 
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 * {
@@ -56,8 +65,15 @@ html {
 body {
   margin: 0;
   overflow-x: hidden;
-  background: var(--background);
   color: var(--text-primary);
+  background: radial-gradient(
+      circle at 18% -10%,
+      var(--background-glow),
+      transparent 55%
+    ),
+    radial-gradient(circle at 100% 0%, var(--gold-soft), transparent 45%),
+    linear-gradient(180deg, var(--background) 0%, var(--background-alt) 100%);
+  background-attachment: fixed;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
     Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -74,6 +90,24 @@ a {
   color: inherit;
 }
 
+button {
+  transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+/* ---------- Glass surface (reusado por tarjetas, nav, footers) ---------- */
+
+.glass {
+  background: var(--surface);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-sm);
+}
+
 /* ---------- Layout ---------- */
 
 .app-shell {
@@ -82,13 +116,14 @@ a {
   height: 100%;
   max-width: 720px;
   margin: 0 auto;
+  position: relative;
 }
 
 .screen {
   flex: 1;
   overflow-y: auto;
   padding: var(--space-lg);
-  padding-bottom: calc(var(--space-xxl) * 2);
+  padding-bottom: calc(var(--space-xxl) * 3);
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
@@ -106,20 +141,20 @@ a {
   font-weight: 600;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--gold-deep);
   margin: 0;
 }
 
 .title {
-  font-size: 26px;
+  font-size: 27px;
   font-weight: 700;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.1px;
   color: var(--text-primary);
   margin: 4px 0 0;
 }
 
 .subtitle {
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 500;
   color: var(--text-secondary);
   margin: 4px 0 0;
@@ -132,13 +167,21 @@ a {
   margin: var(--space-lg) 0 var(--space-sm);
 }
 
-/* ---------- Bottom nav ---------- */
+/* ---------- Bottom nav (flotante, estilo liquid glass) ---------- */
 
 .bottom-nav {
+  position: sticky;
+  bottom: var(--space-md);
+  z-index: 20;
   display: flex;
-  border-top: 1px solid var(--border);
-  background: var(--surface);
-  padding: var(--space-xs) var(--space-sm) env(safe-area-inset-bottom, var(--space-xs));
+  margin: 0 var(--space-lg) calc(var(--space-md) + env(safe-area-inset-bottom, 0px));
+  padding: 6px;
+  border-radius: var(--radius-xl);
+  background: var(--surface-elevated);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-md);
 }
 
 .bottom-nav a {
@@ -152,11 +195,13 @@ a {
   color: var(--text-muted);
   font-size: 11px;
   font-weight: 600;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
+  transition: color 0.2s ease, background 0.2s ease;
 }
 
 .bottom-nav a.active {
-  color: var(--gold);
+  color: var(--gold-deep);
+  background: var(--gold-soft);
 }
 
 /* ---------- Cards / grids ---------- */
@@ -170,7 +215,10 @@ a {
 .stat-card {
   flex: 1 1 45%;
   background: var(--surface);
-  border: 1px solid var(--border-soft);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-sm);
   border-radius: var(--radius-lg);
   padding: var(--space-md);
   display: flex;
@@ -181,8 +229,8 @@ a {
 }
 
 .stat-card__icon {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: var(--radius-pill);
   display: flex;
   align-items: center;
@@ -209,7 +257,7 @@ a {
 
 .tone-gold .stat-card__icon {
   background: var(--gold-soft);
-  color: var(--gold);
+  color: var(--gold-deep);
 }
 .tone-success .stat-card__icon {
   background: var(--success-soft);
@@ -238,7 +286,10 @@ a {
 .action-card {
   flex: 1;
   background: var(--surface);
-  border: 1px solid var(--border-soft);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-sm);
   border-radius: var(--radius-lg);
   padding: var(--space-lg) var(--space-sm);
   display: flex;
@@ -250,16 +301,24 @@ a {
   font-weight: 500;
   text-align: center;
   cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.action-card:active {
+  transform: translateY(1px) scale(0.98);
 }
 
 .action-card svg {
-  color: var(--gold);
+  color: var(--gold-deep);
   font-size: 22px;
 }
 
 .list-card {
   background: var(--surface);
-  border: 1px solid var(--border-soft);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-sm);
   border-radius: var(--radius-lg);
   padding: var(--space-md);
   display: flex;
@@ -270,13 +329,13 @@ a {
 .goal-bar {
   height: 10px;
   border-radius: var(--radius-pill);
-  background: var(--surface-elevated);
+  background: rgba(60, 47, 34, 0.08);
   overflow: hidden;
 }
 
 .goal-bar__fill {
   height: 100%;
-  background: var(--gold);
+  background: linear-gradient(90deg, var(--gold-deep), var(--gold));
   border-radius: var(--radius-pill);
   transition: width 0.3s ease;
 }
@@ -315,10 +374,18 @@ a {
   justify-content: space-between;
   gap: var(--space-sm);
   background: var(--surface);
-  border: 1px solid var(--border-soft);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-sm);
   border-radius: var(--radius-lg);
   padding: var(--space-md);
   cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.item-card:active {
+  transform: scale(0.99);
 }
 
 .item-card--disabled {
@@ -371,13 +438,14 @@ a {
   justify-content: center;
   background: var(--surface-elevated);
   color: var(--text-primary);
-  border: none;
+  border: 1px solid var(--glass-border);
   cursor: pointer;
 }
 
 .stepper-btn.add {
-  background: var(--gold);
+  background: linear-gradient(160deg, var(--gold), var(--gold-deep));
   color: var(--text-on-gold);
+  border: none;
 }
 
 .stepper-btn:disabled {
@@ -411,19 +479,23 @@ a {
 .form-field input,
 .form-field select,
 .form-field textarea {
-  background: var(--surface);
+  background: var(--surface-elevated);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 10px 12px;
   color: var(--text-primary);
   font-size: 15px;
   outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .form-field input:focus,
 .form-field select:focus,
 .form-field textarea:focus {
   border-color: var(--gold);
+  box-shadow: 0 0 0 3px var(--gold-soft);
 }
 
 .form-row {
@@ -475,23 +547,25 @@ a {
   padding: 8px 14px;
   border-radius: var(--radius-pill);
   border: 1px solid var(--border);
-  background: var(--surface);
+  background: var(--surface-elevated);
   color: var(--text-secondary);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.15s ease;
 }
 
 .choice-chip.selected {
-  background: var(--gold);
-  border-color: var(--gold);
+  background: linear-gradient(160deg, var(--gold), var(--gold-deep));
+  border-color: var(--gold-deep);
   color: var(--text-on-gold);
+  box-shadow: var(--shadow-sm);
 }
 
 /* ---------- Buttons ---------- */
 
 .btn-primary {
-  background: var(--gold);
+  background: linear-gradient(160deg, var(--gold), var(--gold-deep));
   color: var(--text-on-gold);
   border: none;
   border-radius: var(--radius-md);
@@ -500,6 +574,7 @@ a {
   font-weight: 700;
   cursor: pointer;
   width: 100%;
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-primary:disabled {
@@ -508,9 +583,11 @@ a {
 }
 
 .btn-secondary {
-  background: transparent;
+  background: var(--surface-elevated);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
   color: var(--text-secondary);
-  border: 1px solid var(--border);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
   padding: 12px;
   font-size: 14px;
@@ -521,7 +598,7 @@ a {
 .btn-danger {
   background: var(--danger-soft);
   color: var(--danger);
-  border: 1px solid var(--danger);
+  border: 1px solid rgba(209, 104, 79, 0.35);
   border-radius: var(--radius-md);
   padding: 12px;
   font-size: 14px;
@@ -531,12 +608,12 @@ a {
 
 .fab {
   position: fixed;
-  bottom: 88px;
+  bottom: 96px;
   right: max(24px, calc((100vw - 720px) / 2 + 24px));
   width: 56px;
   height: 56px;
   border-radius: var(--radius-pill);
-  background: var(--gold);
+  background: linear-gradient(160deg, var(--gold), var(--gold-deep));
   color: var(--text-on-gold);
   border: none;
   display: flex;
@@ -544,7 +621,7 @@ a {
   justify-content: center;
   font-size: 24px;
   cursor: pointer;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--shadow-md);
 }
 
 /* ---------- Badges ---------- */
@@ -560,7 +637,7 @@ a {
 
 .badge.gold {
   background: var(--gold-soft);
-  color: var(--gold);
+  color: var(--gold-deep);
 }
 .badge.danger {
   background: var(--danger-soft);
@@ -591,7 +668,8 @@ a {
 
 .empty-state svg {
   font-size: 40px;
-  color: var(--text-muted);
+  color: var(--gold);
+  opacity: 0.6;
 }
 
 .empty-state__title {
@@ -609,12 +687,19 @@ a {
 /* ---------- Sale / cart footer ---------- */
 
 .cart-footer {
-  border-top: 1px solid var(--border);
-  background: var(--surface);
+  position: sticky;
+  bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  background: var(--surface-elevated);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-md);
+  border-radius: var(--radius-lg);
   padding: var(--space-lg);
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
+  margin-top: var(--space-sm);
 }
 
 .cart-footer__row {
@@ -632,7 +717,7 @@ a {
 .cart-footer__total {
   font-size: 22px;
   font-weight: 700;
-  color: var(--gold);
+  color: var(--gold-deep);
 }
 
 /* ---------- Login ---------- */
@@ -651,17 +736,21 @@ a {
   width: 100%;
   max-width: 360px;
   background: var(--surface);
-  border: 1px solid var(--border-soft);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-md);
   border-radius: var(--radius-lg);
   padding: var(--space-xl);
 }
 
 .login-logo {
-  width: 72px;
-  height: 72px;
+  width: 76px;
+  height: 76px;
   border-radius: var(--radius-lg);
   margin: 0 auto var(--space-md);
   display: block;
+  filter: drop-shadow(var(--shadow-sm));
 }
 
 .error-text {

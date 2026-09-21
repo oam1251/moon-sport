@@ -36,12 +36,7 @@ export default function Inventory() {
   return (
     <ScreenContainer>
       <div className="screen-header">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h1 className="title">Inventario</h1>
-          <button className="btn-secondary" onClick={() => navigate('/inventario/compras')}>
-            Compras
-          </button>
-        </div>
+        <h1 className="title">Inventario</h1>
         <p className="subtitle">
           {products.length} producto(s) · {totalUnits} unidad(es) · valor{' '}
           {formatCurrency(inventoryValue)}

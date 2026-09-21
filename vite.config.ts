@@ -13,8 +13,8 @@ export default defineConfig({
         name: 'Moon Sport',
         short_name: 'Moon Sport',
         description: 'Inventario, ventas y apartados de Moon Sport',
-        theme_color: '#0E0E10',
-        background_color: '#0E0E10',
+        theme_color: '#FBF1E6',
+        background_color: '#FBF1E6',
         display: 'standalone',
         icons: [
           {
