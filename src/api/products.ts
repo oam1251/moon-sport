@@ -168,7 +168,7 @@ export async function deleteProduct(id: number): Promise<void> {
   if (error) throw error;
 }
 
-function readFileAsDataUrl(file: File): Promise<string> {
+function readFileAsDataUrl(file: File | Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result as string);
@@ -177,21 +177,58 @@ function readFileAsDataUrl(file: File): Promise<string> {
   });
 }
 
+const MAX_PHOTO_DIMENSION = 1000;
+const PHOTO_QUALITY = 0.8;
+
+/**
+ * Redimensiona y comprime una foto a JPEG antes de subirla, para no
+ * llenar el almacenamiento con fotos de cámara sin optimizar (varios MB
+ * cada una). Deja el lado más largo en máximo 1000px a calidad 80%,
+ * que normalmente pesa 100-300 KB en vez de 3-6 MB.
+ */
+async function compressImage(file: File): Promise<Blob> {
+  const dataUrl = await readFileAsDataUrl(file);
+  const img = new Image();
+  await new Promise<void>((resolve, reject) => {
+    img.onload = () => resolve();
+    img.onerror = () => reject(new Error('No se pudo leer la imagen.'));
+    img.src = dataUrl;
+  });
+
+  const scale = Math.min(1, MAX_PHOTO_DIMENSION / Math.max(img.width, img.height));
+  const width = Math.round(img.width * scale);
+  const height = Math.round(img.height * scale);
+
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return file;
+  ctx.drawImage(img, 0, 0, width, height);
+
+  const blob = await new Promise<Blob | null>((resolve) =>
+    canvas.toBlob(resolve, 'image/jpeg', PHOTO_QUALITY)
+  );
+  return blob ?? file;
+}
+
 /**
  * Sube una foto de producto y devuelve la URL para guardar en
  * `ProductInput.photoUrl`. En modo real usa Supabase Storage (bucket
  * público `product-photos`); en modo mock la guarda como data-URL.
+ * En ambos casos la foto se comprime primero (ver `compressImage`).
  */
 export async function uploadProductPhoto(file: File): Promise<string> {
+  const compressed = await compressImage(file);
+
   if (!isSupabaseConfigured) {
-    return readFileAsDataUrl(file);
+    return readFileAsDataUrl(compressed);
   }
 
-  const ext = file.name.split('.').pop() || 'jpg';
-  const path = `${crypto.randomUUID()}.${ext}`;
-  const { error } = await supabase.storage.from('product-photos').upload(path, file, {
+  const path = `${crypto.randomUUID()}.jpg`;
+  const { error } = await supabase.storage.from('product-photos').upload(path, compressed, {
     upsert: true,
-    contentType: file.type || undefined,
+    contentType: 'image/jpeg',
   });
   if (error) throw error;
 
