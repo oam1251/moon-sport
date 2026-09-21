@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1600" preserveAspectRatio="xMidYMid slice">
+  <!-- Círculos tipo luna/órbita, solo contorno fino -->
+  <g fill="none" stroke="#A9782F">
+    <circle cx="150" cy="180" r="34" stroke-opacity="0.14" stroke-width="1.5" />
+    <circle cx="670" cy="120" r="20" stroke-opacity="0.16" stroke-width="1.5" />
+    <circle cx="90" cy="520" r="14" stroke-opacity="0.15" stroke-width="1.5" />
+    <circle cx="700" cy="640" r="46" stroke-opacity="0.1" stroke-width="1.5" />
+    <circle cx="250" cy="900" r="22" stroke-opacity="0.14" stroke-width="1.5" />
+    <circle cx="600" cy="1080" r="16" stroke-opacity="0.15" stroke-width="1.5" />
+    <circle cx="130" cy="1280" r="30" stroke-opacity="0.12" stroke-width="1.5" />
+    <circle cx="650" cy="1450" r="18" stroke-opacity="0.15" stroke-width="1.5" />
+  </g>
+
+  <!-- Destellos de 4 puntas, solo contorno fino, dispersos -->
+  <g fill="none" stroke="#A9782F" stroke-width="1.3" stroke-linejoin="round">
+    <path stroke-opacity="0.18" transform="translate(430,90) scale(1.1)" d="M0,-9 Q1.8,-1.8 9,0 Q1.8,1.8 0,9 Q-1.8,1.8 -9,0 Q-1.8,-1.8 0,-9 Z" />
+    <path stroke-opacity="0.16" transform="translate(560,320) scale(0.8)" d="M0,-9 Q1.8,-1.8 9,0 Q1.8,1.8 0,9 Q-1.8,1.8 -9,0 Q-1.8,-1.8 0,-9 Z" />
+    <path stroke-opacity="0.15" transform="translate(60,760) scale(1)" d="M0,-9 Q1.8,-1.8 9,0 Q1.8,1.8 0,9 Q-1.8,1.8 -9,0 Q-1.8,-1.8 0,-9 Z" />
+    <path stroke-opacity="0.18" transform="translate(730,860) scale(0.7)" d="M0,-9 Q1.8,-1.8 9,0 Q1.8,1.8 0,9 Q-1.8,1.8 -9,0 Q-1.8,-1.8 0,-9 Z" />
+    <path stroke-opacity="0.16" transform="translate(340,1150) scale(0.9)" d="M0,-9 Q1.8,-1.8 9,0 Q1.8,1.8 0,9 Q-1.8,1.8 -9,0 Q-1.8,-1.8 0,-9 Z" />
+    <path stroke-opacity="0.15" transform="translate(500,1400) scale(1.2)" d="M0,-9 Q1.8,-1.8 9,0 Q1.8,1.8 0,9 Q-1.8,1.8 -9,0 Q-1.8,-1.8 0,-9 Z" />
+  </g>
+</svg>
