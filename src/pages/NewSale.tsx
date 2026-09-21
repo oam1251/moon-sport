@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { IoRemove, IoAdd, IoSearchOutline, IoLogoWhatsapp } from 'react-icons/io5';
+import { IoRemove, IoAdd, IoSearchOutline } from 'react-icons/io5';
 import ScreenContainer from '../components/ScreenContainer';
 import FormField from '../components/FormField';
 import PrimaryButton from '../components/PrimaryButton';
@@ -30,11 +30,6 @@ export default function NewSale() {
   const [depositText, setDepositText] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [completedSale, setCompletedSale] = useState<{
-    total: number;
-    phone: string | null;
-    text: string;
-  } | null>(null);
 
   useEffect(() => {
     listProducts().then(setProducts);
@@ -77,17 +72,6 @@ export default function NewSale() {
   const selectedCustomer = customers.find((c) => c.id === Number(customerId));
   const effectiveCustomerName = selectedCustomer?.name || customerName.trim() || null;
 
-  const buildTicketText = (finalTotal: number) => {
-    const lines = cartLines
-      .map((l) => `${l.qty} × ${l.product.name} — ${formatCurrency(l.product.sellPrice * l.qty)}`)
-      .join('\n');
-    return (
-      `*Moon Sport* — Ticket de venta\n\n${lines}\n\n` +
-      `Total: ${formatCurrency(finalTotal)}\n` +
-      `Pago: ${paymentMethod}\n\n¡Gracias por tu compra!`
-    );
-  };
-
   const handleConfirm = async () => {
     if (cartLines.length === 0) {
       setError('Agrega al menos un producto.');
@@ -114,52 +98,13 @@ export default function NewSale() {
         customerId: selectedCustomer?.id ?? null,
         customerName: effectiveCustomerName,
       });
-      setCompletedSale({
-        total,
-        phone: selectedCustomer?.phone ?? null,
-        text: buildTicketText(total),
-      });
+      navigate('/ventas');
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
       setSaving(false);
     }
   };
-
-  if (completedSale) {
-    const waUrl = `https://wa.me/${completedSale.phone ? completedSale.phone.replace(/\D/g, '') : ''}?text=${encodeURIComponent(completedSale.text)}`;
-    return (
-      <ScreenContainer>
-        <div className="screen-header">
-          <h1 className="title">Venta registrada</h1>
-          <p className="subtitle">Total: {formatCurrency(completedSale.total)}</p>
-        </div>
-        <a
-          href={waUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="btn-primary"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 8,
-            textDecoration: 'none',
-          }}
-        >
-          <IoLogoWhatsapp size={18} />
-          Compartir ticket por WhatsApp
-        </a>
-        <button
-          className="btn-secondary"
-          style={{ width: '100%', marginTop: 12 }}
-          onClick={() => navigate('/ventas')}
-        >
-          Listo
-        </button>
-      </ScreenContainer>
-    );
-  }
 
   return (
     <ScreenContainer>
@@ -220,7 +165,7 @@ export default function NewSale() {
           </div>
           {!customerId && (
             <FormField
-              label="O escribe un nombre para el ticket (opcional)"
+              label="O escribe un nombre de cliente (opcional)"
               value={customerName}
               onChange={setCustomerName}
             />

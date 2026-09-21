@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import ScreenContainer from '../components/ScreenContainer';
 import ChoiceChips from '../components/ChoiceChips';
 import StatCard from '../components/StatCard';
+import PrimaryButton from '../components/PrimaryButton';
 import { IoWalletOutline, IoPricetagOutline, IoTrendingUpOutline } from 'react-icons/io5';
 import { getPeriodSummary, getTopProducts } from '../api/reports';
+import { downloadPdf } from '../api/backups';
 import { formatCurrency } from '../utils/format';
 import type { PeriodKey, PeriodSummary, TopProduct } from '../types';
 
@@ -24,6 +26,20 @@ export default function Reports() {
   const [period, setPeriod] = useState<PeriodKey>('month');
   const [summary, setSummary] = useState<PeriodSummary>(EMPTY_SUMMARY);
   const [topProducts, setTopProducts] = useState<TopProduct[]>([]);
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
+
+  const handleExport = async () => {
+    setExportError(null);
+    setExporting(true);
+    try {
+      await downloadPdf();
+    } catch (err) {
+      setExportError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setExporting(false);
+    }
+  };
 
   useEffect(() => {
     Promise.all([getPeriodSummary(period), getTopProducts(period)]).then(
@@ -82,6 +98,10 @@ export default function Reports() {
           ))}
         </div>
       )}
+
+      <h2 className="section-label">Exportar</h2>
+      {exportError && <p className="error-text">{exportError}</p>}
+      <PrimaryButton label="Exportar a PDF" onClick={handleExport} loading={exporting} />
     </ScreenContainer>
   );
 }

@@ -57,8 +57,27 @@ export default function Dashboard() {
   return (
     <ScreenContainer>
       <div className="screen-header">
-        <p className="eyebrow">Moon Sport</p>
-        <h1 className="title">Resumen de la tienda</h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <img
+            src={`${import.meta.env.BASE_URL}icon.png`}
+            alt="Moon Sport"
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 12,
+              flexShrink: 0,
+              filter: 'drop-shadow(var(--shadow-sm))',
+            }}
+          />
+          <div>
+            <p className="eyebrow" style={{ margin: 0 }}>
+              Moon Sport
+            </p>
+            <h1 className="title" style={{ margin: 0 }}>
+              Resumen de la tienda
+            </h1>
+          </div>
+        </div>
       </div>
 
       <h2 className="section-label">Hoy</h2>

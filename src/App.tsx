@@ -8,8 +8,6 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Inventory from './pages/Inventory';
 import ProductForm from './pages/ProductForm';
-import Purchases from './pages/Purchases';
-import NewPurchase from './pages/NewPurchase';
 import Sales from './pages/Sales';
 import NewSale from './pages/NewSale';
 import Layaways from './pages/Layaways';
@@ -100,8 +98,6 @@ function AppShell() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/inventario" element={<Inventory />} />
         <Route path="/inventario/nuevo" element={<ProductForm />} />
-        <Route path="/inventario/compras" element={<Purchases />} />
-        <Route path="/inventario/compras/nueva" element={<NewPurchase />} />
         <Route path="/inventario/:id" element={<ProductForm />} />
         <Route path="/ventas" element={<Sales />} />
         <Route path="/ventas/nueva" element={<NewSale />} />

@@ -78,30 +78,6 @@ export interface Customer {
 
 export type CustomerInput = Omit<Customer, 'id' | 'createdAt'>;
 
-export interface PurchaseItem {
-  id: number;
-  purchaseId: number;
-  productId: number;
-  productName: string;
-  qty: number;
-  unitCost: number;
-}
-
-export interface Purchase {
-  id: number;
-  date: string;
-  supplier: string | null;
-  note: string | null;
-  totalCost: number;
-  items: PurchaseItem[];
-}
-
-export interface PurchaseLine {
-  product: Product;
-  qty: number;
-  unitCost: number;
-}
-
 export type LayawayStatus = 'abierto' | 'completado' | 'cancelado';
 
 export interface LayawayPayment {

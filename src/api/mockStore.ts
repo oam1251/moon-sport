@@ -1,24 +1,21 @@
-import type { BusinessSettings, Customer, Layaway, Product, Purchase, Sale } from '../types';
+import type { BusinessSettings, Customer, Layaway, Product, Sale } from '../types';
 
 export interface MockStore {
   products: Product[];
   sales: Sale[];
   customers: Customer[];
-  purchases: Purchase[];
   layaways: Layaway[];
   settings: BusinessSettings;
   nextProductId: number;
   nextSaleId: number;
   nextSaleItemId: number;
   nextCustomerId: number;
-  nextPurchaseId: number;
-  nextPurchaseItemId: number;
   nextLayawayId: number;
   nextLayawayItemId: number;
   nextLayawayPaymentId: number;
 }
 
-// v2: agrega clientes, compras, apartados, foto de producto y meta
+// v2: agrega clientes, apartados, foto de producto y meta
 // mensual. Se cambia la llave para no intentar migrar datos de ejemplo
 // viejos — total costo cero, simplemente se vuelve a sembrar.
 const STORE_KEY = 'moon-sport-mock-data-v2';
@@ -200,26 +197,6 @@ function seedStore(): MockStore {
     },
   ];
 
-  const purchases: Purchase[] = [
-    {
-      id: 1,
-      date: daysAgo(15),
-      supplier: 'Mayorista Textil MX',
-      note: null,
-      totalCost: 2400,
-      items: [
-        {
-          id: 1,
-          purchaseId: 1,
-          productId: 1,
-          productName: 'Playera Moon Sport Negra',
-          qty: 20,
-          unitCost: 120,
-        },
-      ],
-    },
-  ];
-
   const layaways: Layaway[] = [
     {
       id: 1,
@@ -252,15 +229,12 @@ function seedStore(): MockStore {
     products,
     sales,
     customers,
-    purchases,
     layaways,
     settings,
     nextProductId: 6,
     nextSaleId: 4,
     nextSaleItemId: 6,
     nextCustomerId: 3,
-    nextPurchaseId: 2,
-    nextPurchaseItemId: 2,
     nextLayawayId: 2,
     nextLayawayItemId: 2,
     nextLayawayPaymentId: 2,

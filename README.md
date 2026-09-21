@@ -1,7 +1,7 @@
 # Moon Sport — App de inventario, ventas y apartados
 
 Web app para que la dueña de Moon Sport controle su inventario,
-registre ventas, apartados y compras, y vea de un vistazo cuánto está
+registre ventas y apartados, y vea de un vistazo cuánto está
 ganando. Se abre desde cualquier navegador (celular, tablet o
 computadora) — no requiere tiendas de apps ni instalación — y se puede
 "agregar a la pantalla de inicio" del celular para que se sienta como
@@ -17,15 +17,12 @@ dependan de un solo celular, con **respaldos diarios automáticos**.
   progreso hacia la meta mensual, y alertas de productos con poco stock.
 - **Inventario**: alta, edición y baja de productos (nombre, categoría,
   talla, color, SKU, foto, costo, precio de venta, existencias y
-  mínimo de stock). Búsqueda rápida.
-- **Compras**: registrar entradas de mercancía (proveedor, cantidad y
-  costo por producto), que aumentan el stock y opcionalmente
-  actualizan el costo del producto.
+  mínimo de stock). Búsqueda rápida. Las fotos se comprimen solas antes
+  de subirse (ver [Fotos y almacenamiento](#fotos-y-almacenamiento)).
 - **Ventas**: registrar una venta o un **apartado** (layaway) eligiendo
   productos y cantidades; se calcula automáticamente el total y la
-  ganancia, se descuenta el stock solo, y se puede compartir el ticket
-  por WhatsApp. Los apartados llevan su propio historial de abonos y
-  se convierten en venta al completarse.
+  ganancia, y se descuenta el stock solo. Los apartados llevan su
+  propio historial de abonos y se convierten en venta al completarse.
 - **Clientes**: contacto básico (nombre, teléfono) para asociar a
   ventas y apartados.
 - **Reportes**: comparativo de ingresos, costo de mercancía y ganancia
@@ -40,7 +37,7 @@ dependan de un solo celular, con **respaldos diarios automáticos**.
 1. Crea una cuenta y un proyecto nuevo en [supabase.com](https://supabase.com).
 2. Ve a **SQL Editor** y corre, en este orden, el contenido de:
    - `supabase/schema.sql` (tablas + seguridad)
-   - `supabase/functions.sql` (ventas, apartados, compras, reportes)
+   - `supabase/functions.sql` (ventas, apartados, reportes)
    - `supabase/storage.sql` (buckets de respaldos y fotos de producto)
 3. Ve a **Authentication → Users** y crea manualmente el usuario de la
    dueña (correo + contraseña). Es el único login que necesita la app.
@@ -96,16 +93,49 @@ sin depender del cron.
 
 ## 4. Publicar el sitio
 
-Sube este repo a GitHub y conéctalo a **Vercel**, **Netlify** o
-**Cloudflare Pages** (cualquiera funciona sin configuración extra: el
-comando de build es `npm run build`, la carpeta de salida `dist/`).
-En el panel del hosting, agrega las mismas dos variables de entorno
-(`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`) que usaste en
-`.env.local`.
+El sitio se publica solo en **GitHub Pages** cada vez que se sube un
+cambio a `master` (workflow `.github/workflows/deploy.yml`). No hace
+falta correr nada a mano — está en vivo en:
+
+**https://oam1251.github.io/moon-sport/**
+
+Si necesitas configurarlo desde cero en otro repositorio:
+
+1. El repo debe ser **público** (GitHub Pages gratis lo requiere) —
+   el código nunca contiene datos reales de clientes, esos siempre
+   viven en Supabase, así que no hay problema de privacidad en hacerlo
+   público.
+2. En **Settings → Secrets and variables → Actions** del repo, agrega
+   `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` (los mismos valores
+   de `.env.local`) — el workflow los usa para compilar.
+3. Activa Pages con origen "GitHub Actions":
+   `gh api -X POST /repos/<owner>/<repo>/pages -f build_type=workflow`
+4. Ajusta `base` en `vite.config.ts` para que coincida con el nombre
+   del repo (`/nombre-del-repo/`), ya que GitHub Pages de proyecto sirve
+   en una subruta, no en la raíz del dominio.
+
+La app usa `HashRouter` (las URLs se ven como `.../#/inventario`) para
+que las rutas internas funcionen en GitHub Pages sin configuración
+extra de redirecciones.
 
 Una vez publicado, la dueña abre la URL desde su celular y puede
 "Agregar a pantalla de inicio" para que quede como un ícono más, igual
 que una app instalada.
+
+## Fotos y almacenamiento
+
+Las fotos de producto se comprimen automáticamente en el navegador
+antes de subirse (máximo 1000px por lado, JPEG al 80%), así que una
+foto de cámara de varios MB queda en **~100-300 KB**. Con el 1 GB de
+almacenamiento gratis de Supabase, eso alcanza para miles de fotos —
+un catálogo de cientos de productos usa un porcentaje mínimo de ese
+espacio. Si nunca activas un plan de pago en Supabase, no hay riesgo de
+cargos: al llegar a un límite del plan gratis simplemente fallan las
+subidas nuevas, no se cobra nada automáticamente.
+
+Cuando se reemplaza o se borra la foto de un producto, la foto anterior
+se borra también de Storage (no se queda como archivo huérfano
+ocupando espacio).
 
 ## Estructura del proyecto
 
@@ -113,19 +143,19 @@ que una app instalada.
 index.html, vite.config.ts        Configuración de Vite (+ PWA)
 supabase/
   schema.sql                      Tablas y seguridad (RLS)
-  functions.sql                   Funciones de negocio (ventas, apartados, compras, reportes)
+  functions.sql                   Funciones de negocio (ventas, apartados, reportes)
   storage.sql                     Buckets de respaldos y fotos de producto
   cron.sql                        Programación del respaldo diario
   functions/daily-backup/         Edge Function del respaldo
 src/
   lib/supabaseClient.ts           Cliente de Supabase (o modo sin backend)
   context/AuthContext.tsx         Sesión de la dueña
-  api/                            products, sales, layaways, purchases, customers, reports, settings, backups
+  api/                            products, sales, layaways, customers, reports, settings, backups
   api/mockStore.ts                Datos de ejemplo cuando no hay Supabase configurado
   types/                          Tipos de datos (Producto, Venta, Apartado, Cliente, etc.)
   styles/global.css               Paleta y estilos (marca Moon Sport)
   components/                     Piezas reutilizables (botones, tarjetas, badges, etc.)
-  pages/                          Cada pantalla (Inicio, Inventario, Compras, Ventas, Apartados, Clientes, Reportes, Ajustes)
+  pages/                          Cada pantalla (Inicio, Inventario, Ventas, Apartados, Clientes, Reportes, Ajustes)
 public/                           Ícono y logo de Moon Sport (favicon + PWA)
 ```
 

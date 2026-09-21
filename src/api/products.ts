@@ -138,6 +138,12 @@ export async function updateProduct(id: number, input: ProductInput): Promise<vo
     return;
   }
 
+  const { data: existing } = await supabase
+    .from('products')
+    .select('photo_url')
+    .eq('id', id)
+    .maybeSingle();
+
   const { error } = await supabase
     .from('products')
     .update({
@@ -155,6 +161,12 @@ export async function updateProduct(id: number, input: ProductInput): Promise<vo
     })
     .eq('id', id);
   if (error) throw error;
+
+  // Si se reemplazó la foto, borra la anterior para no dejarla huérfana
+  // ocupando espacio en Storage.
+  if (existing?.photo_url && existing.photo_url !== input.photoUrl) {
+    await deleteStoragePhoto(existing.photo_url);
+  }
 }
 
 export async function deleteProduct(id: number): Promise<void> {
@@ -164,8 +176,40 @@ export async function deleteProduct(id: number): Promise<void> {
     setStore(store);
     return;
   }
+
+  const { data: existing } = await supabase
+    .from('products')
+    .select('photo_url')
+    .eq('id', id)
+    .maybeSingle();
+
   const { error } = await supabase.from('products').delete().eq('id', id);
   if (error) throw error;
+
+  if (existing?.photo_url) {
+    await deleteStoragePhoto(existing.photo_url);
+  }
+}
+
+const PHOTO_BUCKET = 'product-photos';
+
+/**
+ * Borra una foto de producto de Supabase Storage a partir de su URL
+ * pública, para no dejar archivos huérfanos cuando se reemplaza o se
+ * borra un producto. No falla la operación principal si algo sale mal
+ * aquí (es limpieza, no algo crítico).
+ */
+async function deleteStoragePhoto(photoUrl: string | null): Promise<void> {
+  if (!photoUrl) return;
+  const marker = `/storage/v1/object/public/${PHOTO_BUCKET}/`;
+  const idx = photoUrl.indexOf(marker);
+  if (idx === -1) return; // no es una foto en nuestro bucket (ej. data-URL)
+  const path = photoUrl.slice(idx + marker.length);
+  try {
+    await supabase.storage.from(PHOTO_BUCKET).remove([path]);
+  } catch {
+    // best-effort: si falla el borrado, no interrumpe el flujo principal.
+  }
 }
 
 function readFileAsDataUrl(file: File | Blob): Promise<string> {

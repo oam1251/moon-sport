@@ -48,23 +48,6 @@ create table if not exists sale_items (
 
 alter table products add column if not exists photo_url text;
 
-create table if not exists purchases (
-  id bigint generated always as identity primary key,
-  date timestamptz not null default now(),
-  supplier text,
-  note text,
-  total_cost numeric not null default 0
-);
-
-create table if not exists purchase_items (
-  id bigint generated always as identity primary key,
-  purchase_id bigint not null references purchases(id) on delete cascade,
-  product_id bigint not null references products(id) on delete cascade,
-  product_name text not null,
-  qty integer not null,
-  unit_cost numeric not null
-);
-
 create table if not exists layaways (
   id bigint generated always as identity primary key,
   date timestamptz not null default now(),
@@ -106,7 +89,6 @@ on conflict (id) do nothing;
 
 create index if not exists idx_sales_date on sales(date);
 create index if not exists idx_sale_items_sale_id on sale_items(sale_id);
-create index if not exists idx_purchase_items_purchase_id on purchase_items(purchase_id);
 create index if not exists idx_layaway_items_layaway_id on layaway_items(layaway_id);
 create index if not exists idx_layaway_payments_layaway_id on layaway_payments(layaway_id);
 create index if not exists idx_layaways_status on layaways(status);
@@ -117,8 +99,6 @@ alter table products enable row level security;
 alter table sales enable row level security;
 alter table sale_items enable row level security;
 alter table customers enable row level security;
-alter table purchases enable row level security;
-alter table purchase_items enable row level security;
 alter table layaways enable row level security;
 alter table layaway_items enable row level security;
 alter table layaway_payments enable row level security;
@@ -131,10 +111,6 @@ create policy "authenticated full access" on sales
 create policy "authenticated full access" on sale_items
   for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
 create policy "authenticated full access" on customers
-  for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
-create policy "authenticated full access" on purchases
-  for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
-create policy "authenticated full access" on purchase_items
   for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
 create policy "authenticated full access" on layaways
   for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');

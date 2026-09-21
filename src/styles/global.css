@@ -517,6 +517,29 @@ button:active {
   box-shadow: 0 0 0 3px var(--gold-soft);
 }
 
+.form-field input[type='file'] {
+  padding: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.form-field input[type='file']::file-selector-button {
+  background: var(--gold);
+  color: var(--text-on-gold);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  margin-right: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.form-field input[type='file']::file-selector-button:hover {
+  background: var(--gold-deep);
+}
+
 .form-row {
   display: flex;
   gap: var(--space-md);
@@ -525,35 +548,6 @@ button:active {
 .form-row > .form-field {
   flex: 1;
   min-width: 0;
-}
-
-.purchase-line {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  padding-bottom: var(--space-sm);
-  border-bottom: 1px solid var(--border-soft);
-}
-
-.purchase-line:last-child {
-  padding-bottom: 0;
-  border-bottom: none;
-}
-
-.purchase-line__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-sm);
-}
-
-.purchase-line__header .item-card__name {
-  flex: 1;
-  min-width: 0;
-}
-
-.purchase-line__header .stepper-btn {
-  flex-shrink: 0;
 }
 
 .choice-chips {

@@ -11,8 +11,6 @@ const TABLES = [
   'sales',
   'sale_items',
   'customers',
-  'purchases',
-  'purchase_items',
   'layaways',
   'layaway_items',
   'layaway_payments',

@@ -131,70 +131,6 @@ as $$
   limit p_limit;
 $$;
 
--- Registra una compra (renglones + aumento de stock) de forma atómica.
--- `p_items` es [{"product_id": 1, "qty": 5, "unit_cost": 100}, ...].
--- Si `p_update_cost` es true, el costo del producto se actualiza al
--- último costo de compra.
-create or replace function register_purchase(
-  p_items jsonb,
-  p_supplier text default null,
-  p_note text default null,
-  p_update_cost boolean default true
-) returns bigint
-language plpgsql
-security definer
-set search_path = public
-as $$
-declare
-  v_purchase_id bigint;
-  v_total_cost numeric := 0;
-  item jsonb;
-  v_product products%rowtype;
-  v_qty integer;
-  v_unit_cost numeric;
-begin
-  if p_items is null or jsonb_array_length(p_items) = 0 then
-    raise exception 'La compra necesita al menos un producto.';
-  end if;
-
-  insert into purchases (date, supplier, note, total_cost)
-  values (now(), nullif(trim(coalesce(p_supplier, '')), ''), nullif(trim(coalesce(p_note, '')), ''), 0)
-  returning id into v_purchase_id;
-
-  for item in select * from jsonb_array_elements(p_items)
-  loop
-    v_qty := (item->>'qty')::integer;
-    v_unit_cost := (item->>'unit_cost')::numeric;
-
-    select * into v_product from products
-      where id = (item->>'product_id')::bigint
-      for update;
-
-    if not found then
-      raise exception 'El producto % ya no existe.', item->>'product_id';
-    end if;
-    if v_qty <= 0 then
-      raise exception 'Cantidad inválida para %.', v_product.name;
-    end if;
-
-    insert into purchase_items (purchase_id, product_id, product_name, qty, unit_cost)
-    values (v_purchase_id, v_product.id, v_product.name, v_qty, v_unit_cost);
-
-    update products set
-      stock = stock + v_qty,
-      cost_price = case when p_update_cost then v_unit_cost else cost_price end,
-      updated_at = now()
-    where id = v_product.id;
-
-    v_total_cost := v_total_cost + v_unit_cost * v_qty;
-  end loop;
-
-  update purchases set total_cost = v_total_cost where id = v_purchase_id;
-
-  return v_purchase_id;
-end;
-$$;
-
 -- Crea un apartado: reserva stock (igual que una venta) y registra el
 -- primer abono si viene con depósito.
 create or replace function create_layaway(
@@ -357,7 +293,6 @@ revoke all on function register_sale(jsonb, text, text, bigint, text) from publi
 revoke all on function delete_sale(bigint) from public;
 revoke all on function get_period_summary(timestamptz) from public;
 revoke all on function get_top_products(timestamptz, integer) from public;
-revoke all on function register_purchase(jsonb, text, text, boolean) from public;
 revoke all on function create_layaway(jsonb, bigint, text, numeric, text, text) from public;
 revoke all on function add_layaway_payment(bigint, numeric, text) from public;
 revoke all on function complete_layaway(bigint) from public;
@@ -367,7 +302,6 @@ grant execute on function register_sale(jsonb, text, text, bigint, text) to auth
 grant execute on function delete_sale(bigint) to authenticated;
 grant execute on function get_period_summary(timestamptz) to authenticated;
 grant execute on function get_top_products(timestamptz, integer) to authenticated;
-grant execute on function register_purchase(jsonb, text, text, boolean) to authenticated;
 grant execute on function create_layaway(jsonb, bigint, text, numeric, text, text) to authenticated;
 grant execute on function add_layaway_payment(bigint, numeric, text) to authenticated;
 grant execute on function complete_layaway(bigint) to authenticated;
