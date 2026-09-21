@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { HashRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { isSupabaseConfigured } from './lib/supabaseClient';
@@ -41,7 +41,7 @@ function Gate() {
     if (session && startedLoggedOut.current) {
       // Login recién hecho: manda siempre a Inicio, sin importar en qué
       // ruta se haya quedado el navegador de una sesión anterior.
-      window.history.replaceState(null, '', '/');
+      window.location.hash = '/';
       startedLoggedOut.current = false;
     } else if (!session) {
       // Se cerró sesión: la próxima vez que entre, vuelve a mandar a Inicio.
@@ -67,9 +67,9 @@ function Gate() {
   }
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <AppShell />
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 

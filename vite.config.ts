@@ -3,7 +3,13 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import path from 'node:path';
 
+// Publicado como GitHub Pages de proyecto: sirve en /moon-sport/, no en
+// la raíz del dominio. Si cambias de hosting a uno que sirva en la raíz
+// (Vercel/Netlify), cambia esto a '/'.
+const base = '/moon-sport/';
+
 export default defineConfig({
+  base,
   plugins: [
     react(),
     VitePWA({
@@ -16,9 +22,11 @@ export default defineConfig({
         theme_color: '#FBF1E6',
         background_color: '#FBF1E6',
         display: 'standalone',
+        start_url: base,
+        scope: base,
         icons: [
           {
-            src: '/icon.png',
+            src: `${base}icon.png`,
             sizes: '1024x1024',
             type: 'image/png',
             purpose: 'any',

@@ -21,7 +21,7 @@ export default function Login() {
   return (
     <div className="login-screen">
       <form className="login-card" onSubmit={handleSubmit}>
-        <img src="/icon.png" alt="Moon Sport" className="login-logo" />
+        <img src={`${import.meta.env.BASE_URL}icon.png`} alt="Moon Sport" className="login-logo" />
         <p className="eyebrow" style={{ textAlign: 'center' }}>
           Moon Sport
         </p>

@@ -66,7 +66,8 @@ body {
   margin: 0;
   overflow-x: hidden;
   color: var(--text-primary);
-  background: url('/bg-pattern.svg') center/cover no-repeat,
+  /* Ojo: esta ruta debe coincidir con `base` en vite.config.ts */
+  background: url('/moon-sport/bg-pattern.svg') center/cover no-repeat,
     radial-gradient(
       circle at 18% -10%,
       var(--background-glow),
