@@ -12,7 +12,7 @@ export default defineConfig({
       manifest: {
         name: 'Moon Sport',
         short_name: 'Moon Sport',
-        description: 'Inventario, ventas y gastos de Moon Sport',
+        description: 'Inventario, ventas y apartados de Moon Sport',
         theme_color: '#0E0E10',
         background_color: '#0E0E10',
         display: 'standalone',
@@ -21,7 +21,7 @@ export default defineConfig({
             src: '/icon.png',
             sizes: '1024x1024',
             type: 'image/png',
-            purpose: 'any maskable',
+            purpose: 'any',
           },
         ],
       },
