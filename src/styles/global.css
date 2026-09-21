@@ -1,36 +1,36 @@
-/* Paleta Moon Sport — cálida, suave, con superficies "liquid glass"
-   (vidrio esmerilado translúcido). Fuente única de verdad. */
+/* Paleta Moon Sport — "joya oscura": azul medianoche + dorado vibrante
+   (cielo nocturno + luna + estrellas). Tarjetas sólidas (sin vidrio/blur).
+   Fuente única de verdad. */
 :root {
-  --background: #fbf1e6;
-  --background-alt: #f6e3d2;
-  --background-glow: #fff8ef;
+  --background: #10162e;
+  --background-alt: #0a0d1f;
+  --background-glow: #2a3570;
 
-  --surface: rgba(255, 255, 255, 0.55);
-  --surface-elevated: rgba(255, 255, 255, 0.72);
-  --surface-pressed: rgba(255, 255, 255, 0.88);
-  --glass-border: rgba(255, 255, 255, 0.7);
-  --glass-blur: 22px;
+  --surface: #1c2350;
+  --surface-elevated: #242c5e;
+  --surface-pressed: #2d366e;
+  --card-border: rgba(255, 255, 255, 0.08);
 
-  --gold: #c99a4b;
-  --gold-deep: #a9782f;
-  --gold-soft: rgba(201, 154, 75, 0.16);
+  --gold: #f2c14e;
+  --gold-deep: #d9a72c;
+  --gold-soft: rgba(242, 193, 78, 0.18);
 
-  --text-primary: #3c2f22;
-  --text-secondary: #8a7561;
-  --text-muted: #ad9a86;
-  --text-on-gold: #fffaf2;
+  --text-primary: #f3f4ff;
+  --text-secondary: #9aa3d4;
+  --text-muted: #6c74a8;
+  --text-on-gold: #241705;
 
-  --danger: #d1684f;
-  --danger-soft: rgba(209, 104, 79, 0.13);
-  --success: #6ea378;
-  --success-soft: rgba(110, 163, 120, 0.15);
-  --info: #7c93b0;
+  --danger: #ff8577;
+  --danger-soft: rgba(255, 133, 119, 0.16);
+  --success: #4ee0a1;
+  --success-soft: rgba(78, 224, 161, 0.16);
+  --info: #8fb2ff;
 
-  --border: rgba(60, 47, 34, 0.12);
-  --border-soft: rgba(60, 47, 34, 0.07);
+  --border: rgba(255, 255, 255, 0.1);
+  --border-soft: rgba(255, 255, 255, 0.06);
 
-  --shadow-sm: 0 2px 10px rgba(120, 90, 50, 0.08);
-  --shadow-md: 0 10px 30px rgba(120, 90, 50, 0.14);
+  --shadow-sm: 0 2px 10px rgba(10, 4, 24, 0.3);
+  --shadow-md: 0 12px 30px rgba(10, 4, 24, 0.45);
 
   --radius-sm: 8px;
   --radius-md: 14px;
@@ -45,7 +45,7 @@
   --space-xl: 24px;
   --space-xxl: 32px;
 
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 * {
@@ -66,14 +66,7 @@ body {
   margin: 0;
   overflow-x: hidden;
   color: var(--text-primary);
-  /* Ojo: esta ruta debe coincidir con `base` en vite.config.ts */
-  background: url('/moon-sport/bg-pattern.svg') center/cover no-repeat,
-    radial-gradient(
-      circle at 18% -10%,
-      var(--background-glow),
-      transparent 55%
-    ),
-    radial-gradient(circle at 100% 0%, var(--gold-soft), transparent 45%),
+  background: radial-gradient(circle at 20% -10%, var(--background-glow), transparent 55%),
     linear-gradient(180deg, var(--background) 0%, var(--background-alt) 100%);
   background-attachment: fixed;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
@@ -100,14 +93,45 @@ button:active {
   transform: scale(0.97);
 }
 
-/* ---------- Glass surface (reusado por tarjetas, nav, footers) ---------- */
+/* ---------- Estrellitas flotantes de fondo ---------- */
 
-.glass {
-  background: var(--surface);
-  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--shadow-sm);
+.star-field {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.star-field span {
+  position: absolute;
+  bottom: -10px;
+  border-radius: 50%;
+  background: white;
+  opacity: 0;
+  animation: star-float 12s linear infinite;
+}
+
+.star-field span.gold {
+  background: var(--gold);
+  box-shadow: 0 0 6px 1px var(--gold-soft);
+}
+
+@keyframes star-float {
+  0% {
+    transform: translateY(0) scale(0.5);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.9;
+  }
+  85% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-100vh) scale(1);
+    opacity: 0;
+  }
 }
 
 /* ---------- Layout ---------- */
@@ -143,7 +167,7 @@ button:active {
   font-weight: 600;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: var(--gold-deep);
+  color: var(--gold);
   margin: 0;
 }
 
@@ -169,7 +193,7 @@ button:active {
   margin: var(--space-lg) 0 var(--space-sm);
 }
 
-/* ---------- Bottom nav (flotante, estilo liquid glass) ---------- */
+/* ---------- Bottom nav (flotante, tipo píldora) ---------- */
 
 .bottom-nav {
   position: sticky;
@@ -180,9 +204,7 @@ button:active {
   padding: 6px;
   border-radius: var(--radius-xl);
   background: var(--surface-elevated);
-  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--card-border);
   box-shadow: var(--shadow-md);
 }
 
@@ -202,7 +224,7 @@ button:active {
 }
 
 .bottom-nav a.active {
-  color: var(--gold-deep);
+  color: var(--gold);
   background: var(--gold-soft);
 }
 
@@ -217,9 +239,7 @@ button:active {
 .stat-card {
   flex: 1 1 45%;
   background: var(--surface);
-  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--card-border);
   box-shadow: var(--shadow-sm);
   border-radius: var(--radius-lg);
   padding: var(--space-md);
@@ -259,7 +279,7 @@ button:active {
 
 .tone-gold .stat-card__icon {
   background: var(--gold-soft);
-  color: var(--gold-deep);
+  color: var(--gold);
 }
 .tone-success .stat-card__icon {
   background: var(--success-soft);
@@ -288,9 +308,7 @@ button:active {
 .action-card {
   flex: 1;
   background: var(--surface);
-  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--card-border);
   box-shadow: var(--shadow-sm);
   border-radius: var(--radius-lg);
   padding: var(--space-lg) var(--space-sm);
@@ -311,15 +329,13 @@ button:active {
 }
 
 .action-card svg {
-  color: var(--gold-deep);
+  color: var(--gold);
   font-size: 22px;
 }
 
 .list-card {
   background: var(--surface);
-  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--card-border);
   box-shadow: var(--shadow-sm);
   border-radius: var(--radius-lg);
   padding: var(--space-md);
@@ -331,7 +347,7 @@ button:active {
 .goal-bar {
   height: 10px;
   border-radius: var(--radius-pill);
-  background: rgba(60, 47, 34, 0.08);
+  background: rgba(255, 255, 255, 0.08);
   overflow: hidden;
 }
 
@@ -376,9 +392,7 @@ button:active {
   justify-content: space-between;
   gap: var(--space-sm);
   background: var(--surface);
-  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--card-border);
   box-shadow: var(--shadow-sm);
   border-radius: var(--radius-lg);
   padding: var(--space-md);
@@ -440,7 +454,7 @@ button:active {
   justify-content: center;
   background: var(--surface-elevated);
   color: var(--text-primary);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--card-border);
   cursor: pointer;
 }
 
@@ -482,8 +496,6 @@ button:active {
 .form-field select,
 .form-field textarea {
   background: var(--surface-elevated);
-  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 10px 12px;
@@ -491,6 +503,11 @@ button:active {
   font-size: 15px;
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-field input::placeholder,
+.form-field textarea::placeholder {
+  color: var(--text-muted);
 }
 
 .form-field input:focus,
@@ -586,10 +603,8 @@ button:active {
 
 .btn-secondary {
   background: var(--surface-elevated);
-  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
   color: var(--text-secondary);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--card-border);
   border-radius: var(--radius-md);
   padding: 12px;
   font-size: 14px;
@@ -600,7 +615,7 @@ button:active {
 .btn-danger {
   background: var(--danger-soft);
   color: var(--danger);
-  border: 1px solid rgba(209, 104, 79, 0.35);
+  border: 1px solid rgba(255, 133, 119, 0.35);
   border-radius: var(--radius-md);
   padding: 12px;
   font-size: 14px;
@@ -639,7 +654,7 @@ button:active {
 
 .badge.gold {
   background: var(--gold-soft);
-  color: var(--gold-deep);
+  color: var(--gold);
 }
 .badge.danger {
   background: var(--danger-soft);
@@ -671,7 +686,7 @@ button:active {
 .empty-state svg {
   font-size: 40px;
   color: var(--gold);
-  opacity: 0.6;
+  opacity: 0.7;
 }
 
 .empty-state__title {
@@ -692,9 +707,7 @@ button:active {
   position: sticky;
   bottom: calc(96px + env(safe-area-inset-bottom, 0px));
   background: var(--surface-elevated);
-  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--card-border);
   box-shadow: var(--shadow-md);
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
@@ -719,7 +732,7 @@ button:active {
 .cart-footer__total {
   font-size: 22px;
   font-weight: 700;
-  color: var(--gold-deep);
+  color: var(--gold);
 }
 
 /* ---------- Login ---------- */
@@ -738,9 +751,7 @@ button:active {
   width: 100%;
   max-width: 360px;
   background: var(--surface);
-  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--card-border);
   box-shadow: var(--shadow-md);
   border-radius: var(--radius-lg);
   padding: var(--space-xl);
