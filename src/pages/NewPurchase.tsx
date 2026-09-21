@@ -101,19 +101,25 @@ export default function NewPurchase() {
       {lines.length > 0 && (
         <div className="list-card">
           {lines.map((line) => (
-            <div key={line.product.id} className="form-row" style={{ alignItems: 'flex-end' }}>
-              <div style={{ flex: 2 }}>
+            <div key={line.product.id} className="purchase-line">
+              <div className="purchase-line__header">
                 <span className="item-card__name">{line.product.name}</span>
+                <button
+                  type="button"
+                  className="stepper-btn"
+                  onClick={() => removeLine(line.product.id)}
+                  aria-label="Quitar"
+                >
+                  <IoClose />
+                </button>
               </div>
-              <div style={{ flex: 1 }}>
+              <div className="form-row">
                 <FormField
                   label="Cantidad"
                   type="number"
                   value={line.qtyText}
                   onChange={(v) => updateLine(line.product.id, { qtyText: v })}
                 />
-              </div>
-              <div style={{ flex: 1 }}>
                 <FormField
                   label="Costo unitario"
                   type="number"
@@ -121,15 +127,6 @@ export default function NewPurchase() {
                   onChange={(v) => updateLine(line.product.id, { unitCostText: v })}
                 />
               </div>
-              <button
-                type="button"
-                className="stepper-btn"
-                style={{ marginBottom: 12 }}
-                onClick={() => removeLine(line.product.id)}
-                aria-label="Quitar"
-              >
-                <IoClose />
-              </button>
             </div>
           ))}
         </div>

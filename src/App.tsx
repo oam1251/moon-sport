@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -28,6 +29,25 @@ export default function App() {
 
 function Gate() {
   const { session, loading } = useAuth();
+  // Recuerda si arrancamos sin sesión, para saber si lo que acaba de
+  // pasar es un login real (y no solo recargar la página ya logueado).
+  const startedLoggedOut = useRef<boolean | null>(null);
+  if (startedLoggedOut.current === null && !loading) {
+    startedLoggedOut.current = !session;
+  }
+
+  useEffect(() => {
+    if (startedLoggedOut.current === null) return;
+    if (session && startedLoggedOut.current) {
+      // Login recién hecho: manda siempre a Inicio, sin importar en qué
+      // ruta se haya quedado el navegador de una sesión anterior.
+      window.history.replaceState(null, '', '/');
+      startedLoggedOut.current = false;
+    } else if (!session) {
+      // Se cerró sesión: la próxima vez que entre, vuelve a mandar a Inicio.
+      startedLoggedOut.current = true;
+    }
+  }, [session]);
 
   // Sin Supabase configurado, la app entra directo con datos de ejemplo
   // (ver src/api/mockStore.ts) — no tiene caso pedir login.
